@@ -1,0 +1,39 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Patient {
+  age       Int?
+  behaviors Behavior[]
+  createdAt DateTime   @default(now())
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  patterns  Pattern[]
+  sex       String?
+  updatedAt DateTime   @updatedAt
+}
+
+model Behavior {
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  occurredAt  DateTime?
+  patient     Patient?  @relation(fields: [patientId], references: [id])
+  patientId   String?   @db.ObjectId
+  updatedAt   DateTime  @updatedAt
+}
+
+model Pattern {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  patient     Patient? @relation(fields: [patientId], references: [id])
+  patientId   String?  @db.ObjectId
+  updatedAt   DateTime @updatedAt
+}
